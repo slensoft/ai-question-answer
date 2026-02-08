@@ -9,6 +9,7 @@ export const methodologies: Record<string, Methodology> = {
     scenarios: ['work', 'learning'],
     difficulty: '⭐',
     tags: ['全面分析', '信息收集', '易上手'],
+    supportsVisualization: true, // 支持生成思维导图或流程图
     questions: [
       {
         text: 'What - 这是什么问题？具体是什么情况？',
@@ -55,6 +56,7 @@ export const methodologies: Record<string, Methodology> = {
     scenarios: ['work'],
     difficulty: '⭐⭐',
     tags: ['汇报', '逻辑清晰', '说服力强'],
+    supportsVisualization: false, // 叙事性内容，文字更清晰
     questions: [
       {
         text: 'Situation - 当前的背景和情境是什么？',
@@ -86,6 +88,7 @@ export const methodologies: Record<string, Methodology> = {
     scenarios: ['work', 'learning'],
     difficulty: '⭐⭐',
     tags: ['复盘', '面试', '经验总结'],
+    supportsVisualization: false, // 叙事性内容，不需要图形
     questions: [
       {
         text: 'Situation - 当时的情境和背景是什么？',
@@ -122,6 +125,7 @@ export const methodologies: Record<string, Methodology> = {
     scenarios: ['work', 'learning'],
     difficulty: '⭐⭐',
     tags: ['根因分析', '简单易用', '深入本质'],
+    supportsVisualization: true, // ✅ 适合树状图/鱼骨图
     questions: [
       {
         text: '第1个为什么：表面问题是什么？为什么会这样？',
@@ -158,6 +162,7 @@ export const methodologies: Record<string, Methodology> = {
     scenarios: ['innovation'],
     difficulty: '⭐⭐⭐⭐⭐',
     tags: ['创新突破', '深度思考', '打破常规'],
+    supportsVisualization: false, // 深度思考过程，难以图形化
     questions: [
       {
         text: '这个问题的最基本事实是什么？',
@@ -194,6 +199,7 @@ export const methodologies: Record<string, Methodology> = {
     scenarios: ['learning', 'decision'],
     difficulty: '⭐⭐⭐⭐⭐',
     tags: ['深度思考', '批判性思维', '揭示假设'],
+    supportsVisualization: false, // 思考过程，不适合图形
     questions: [
       {
         text: '澄清问题：这个概念的准确定义是什么？',
@@ -235,6 +241,7 @@ export const methodologies: Record<string, Methodology> = {
     scenarios: ['work', 'innovation'],
     difficulty: '⭐⭐',
     tags: ['战略思考', '找到动机', '愿景构建'],
+    supportsVisualization: true, // ✅ 适合同心圆图
     questions: [
       {
         text: 'Why - 为什么要做这件事？核心目的和意义是什么？',
@@ -271,6 +278,7 @@ export const methodologies: Record<string, Methodology> = {
     scenarios: ['work', 'decision'],
     difficulty: '⭐⭐⭐⭐',
     tags: ['系统分析', '不重不漏', '咨询思维'],
+    supportsVisualization: true, // ✅ 适合树状图/思维导图
     questions: [
       {
         text: '这个问题可以从哪些维度拆解？',
@@ -307,6 +315,7 @@ export const methodologies: Record<string, Methodology> = {
     scenarios: ['decision'],
     difficulty: '⭐⭐',
     tags: ['理性决策', '多方案对比', '可视化'],
+    supportsVisualization: true, // ✅ 适合表格/雷达图
     questions: [
       {
         text: '有哪些可选方案？',
@@ -343,6 +352,7 @@ export const methodologies: Record<string, Methodology> = {
     scenarios: ['decision', 'innovation'],
     difficulty: '⭐⭐',
     tags: ['风险识别', '避免失误', '查理·芒格'],
+    supportsVisualization: false, // 思考过程，不需要图形
     questions: [
       {
         text: '如果要让这件事失败，我会怎么做？',
@@ -379,6 +389,7 @@ export const methodologies: Record<string, Methodology> = {
     scenarios: ['learning'],
     difficulty: '⭐⭐',
     tags: ['深度学习', '知识内化', '自我检验'],
+    supportsVisualization: false, // 学习反思，不需要图形
     questions: [
       {
         text: '我能用简单的语言解释这个概念吗？',
@@ -415,6 +426,7 @@ export const methodologies: Record<string, Methodology> = {
     scenarios: ['work'],
     difficulty: '⭐⭐⭐',
     tags: ['销售沟通', '需求挖掘', '引导技巧'],
+    supportsVisualization: false, // 对话式提问，不需要图形
     questions: [
       {
         text: 'Situation - 当前的情况是怎样的？',
@@ -446,6 +458,7 @@ export const methodologies: Record<string, Methodology> = {
     scenarios: ['innovation'],
     difficulty: '⭐⭐⭐⭐',
     tags: ['换个角度', '打破定式', '创新思维'],
+    supportsVisualization: false, // 思维转换过程，文字更好
     questions: [
       {
         text: '这个问题的另一种表述方式是什么？',
@@ -482,6 +495,7 @@ export const methodologies: Record<string, Methodology> = {
     scenarios: ['innovation', 'work'],
     difficulty: '⭐⭐⭐⭐',
     tags: ['设计思维', '系统方法', '创新流程'],
+    supportsVisualization: true, // ✅ 适合流程图
     questions: [
       {
         text: '第一钻发散：这个问题可以从哪些角度看？',
@@ -518,6 +532,7 @@ export const methodologies: Record<string, Methodology> = {
     scenarios: ['work'],
     difficulty: '⭐',
     tags: ['快速表达', '说服沟通', '电梯演讲'],
+    supportsVisualization: false, // 简单的4段论述，不需要图形
     questions: [
       {
         text: 'Point - 你的核心观点是什么？',

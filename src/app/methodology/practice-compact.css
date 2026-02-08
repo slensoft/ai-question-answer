@@ -99,6 +99,28 @@
   box-shadow: 0 4px 12px rgba(106,27,154,0.4);
 }
 
+.btn-visualize {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  border: none;
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.btn-visualize:hover {
+  background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(245,87,108,0.4);
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(245,87,108,0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(245,87,108,0.6);
+  }
+}
+
 .btn-save {
   background: #4caf50;
   color: white;

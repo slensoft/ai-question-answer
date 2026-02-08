@@ -17,6 +17,7 @@ export interface Methodology {
   tags: string[];
   questions: (string | Question)[]; // 兼容旧格式和新格式
   example: string;
+  supportsVisualization?: boolean; // 是否支持可视化
 }
 
 export interface ScenarioNeed {

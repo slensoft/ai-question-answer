@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { getMethodologyByKey } from '@/api/methodology';
 import { usePracticeHistory } from '@/hooks/usePracticeHistory';
 import { getPracticeRecordsByMethodology } from '@/api/practice';
 import { QuestionAnswer, Methodology, Question, PracticeRecord } from '@/types/methodology';
 import { generateAISuggestions } from '@/api/ai';
+import MethodologyHeader from './MethodologyHeader';
 import '../app/methodology/practice-compact.css';
 
 interface PracticeViewProps {
@@ -34,6 +35,7 @@ const getQuestionText = (q: string | Question): string => {
 
 export default function PracticeView({ methodologyKey, onBack }: PracticeViewProps) {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [method, setMethod] = useState<Methodology | null>(null);
   const [loading, setLoading] = useState(true);
   const { saveRecord } = usePracticeHistory();
@@ -45,11 +47,24 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
   const [loadingAI, setLoadingAI] = useState<Record<number, boolean>>({});
   const [autoLoadedAI, setAutoLoadedAI] = useState<Record<number, boolean>>({});
   const [reflection, setReflection] = useState('');
-  const [showSuccess, setShowSuccess] = useState(false);
   const [expandedQuestions, setExpandedQuestions] = useState<Record<number, boolean>>({});
   const [historyRecords, setHistoryRecords] = useState<PracticeRecord[]>([]);
   const [showHistoryPrompt, setShowHistoryPrompt] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+
+  // 处理可视化按钮点击 - 跳转到新页面
+  const handleVisualize = () => {
+    if (!method) return;
+    
+    // 构建 URL 参数
+    const params = new URLSearchParams({
+      methodology: methodologyKey,
+      name: method.name,
+    });
+    
+    // 跳转到可视化页面
+    router.push(`/visualization?${params.toString()}`);
+  };
 
   useEffect(() => {
     const loadMethodology = async () => {
@@ -109,16 +124,6 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
             
             // 不显示历史记录提示
             setShowHistoryPrompt(false);
-          } else {
-            // 如果找不到记录，显示历史记录提示
-            if (records.length > 0) {
-              setShowHistoryPrompt(true);
-            }
-          }
-        } else {
-          // 如果没有 timestamp，显示历史记录提示
-          if (records.length > 0) {
-            setShowHistoryPrompt(true);
           }
         }
       } catch (error) {
@@ -377,22 +382,33 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
   };
 
   const handleExport = () => {
-    if (historyRecords.length === 0) {
-      showToast('当前方法论还没有历史记录！', 'error');
+    // 检查是否有当前填写的内容
+    if (!context.trim() && Object.values(answers).every(a => !a?.trim())) {
+      showToast('当前页面没有填写任何内容！', 'error');
       return;
     }
 
-    // 准备导出数据
-    const exportData = {
+    // 准备当前页面的数据
+    const questionAnswers: QuestionAnswer[] = method.questions.map((q, i) => ({
+      questionNumber: i + 1,
+      question: getQuestionText(q),
+      answer: answers[i] || ''
+    }));
+
+    const currentData = {
       methodology: methodologyKey,
       methodologyName: method?.name,
+      methodologyCategory: method?.category,
+      methodologyDescription: method?.description,
+      methodologyTags: method?.tags,
       exportDate: new Date().toISOString(),
-      totalRecords: historyRecords.length,
-      records: historyRecords
+      context,
+      questionAnswers,
+      reflection
     };
 
     // 创建JSON字符串
-    const dataStr = JSON.stringify(exportData, null, 2);
+    const dataStr = JSON.stringify(currentData, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     
     // 创建下载链接
@@ -411,30 +427,41 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
     URL.revokeObjectURL(url);
     
     // 显示成功提示
-    showToast(`📥 已导出 ${historyRecords.length} 条记录`, 'success');
+    showToast(`📥 已导出当前内容`, 'success');
   };
 
   const handleCopyJSON = async () => {
-    if (historyRecords.length === 0) {
-      showToast('当前方法论还没有历史记录！', 'error');
+    // 检查是否有当前填写的内容
+    if (!context.trim() && Object.values(answers).every(a => !a?.trim())) {
+      showToast('当前页面没有填写任何内容！', 'error');
       return;
     }
 
-    // 准备导出数据
-    const exportData = {
+    // 准备当前页面的数据
+    const questionAnswers: QuestionAnswer[] = method.questions.map((q, i) => ({
+      questionNumber: i + 1,
+      question: getQuestionText(q),
+      answer: answers[i] || ''
+    }));
+
+    const currentData = {
       methodology: methodologyKey,
       methodologyName: method?.name,
+      methodologyCategory: method?.category,
+      methodologyDescription: method?.description,
+      methodologyTags: method?.tags,
       exportDate: new Date().toISOString(),
-      totalRecords: historyRecords.length,
-      records: historyRecords
+      context,
+      questionAnswers,
+      reflection
     };
 
     // 创建JSON字符串
-    const dataStr = JSON.stringify(exportData, null, 2);
+    const dataStr = JSON.stringify(currentData, null, 2);
 
     try {
       await navigator.clipboard.writeText(dataStr);
-      showToast(`📋 已复制 ${historyRecords.length} 条记录的 JSON 数据`, 'success');
+      showToast(`📋 已复制当前内容的 JSON 数据`, 'success');
     } catch (error) {
       console.error('Failed to copy to clipboard:', error);
       showToast('复制失败，请重试', 'error');
@@ -443,35 +470,17 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
 
   return (
     <div className="practice-view-compact">
-      <div className="practice-header-bar">
-        <button className="btn-back" onClick={onBack}>
-          ← 返回
-        </button>
-        <div className="method-title">
-          <span className="method-icon">🎯</span>
-          <span className="method-name">{method.name}</span>
-          <span className="method-difficulty">{method.difficulty}</span>
-        </div>
-        <div className="btn-actions">
-          <button 
-            className="btn-compact btn-export" 
-            onClick={handleExport}
-            title={`导出 ${historyRecords.length} 条历史记录`}
-          >
-            📥 导出记录 {historyRecords.length > 0 && `(${historyRecords.length})`}
-          </button>
-          <button 
-            className="btn-compact btn-copy-json" 
-            onClick={handleCopyJSON}
-            title={`复制 ${historyRecords.length} 条记录的 JSON 数据`}
-          >
-            📋 复制JSON
-          </button>
-          <button className="btn-compact btn-save" onClick={handleSubmit}>
-            💾 保存
-          </button>
-        </div>
-      </div>
+      <MethodologyHeader
+        methodology={method}
+        methodologyKey={methodologyKey}
+        onBack={onBack}
+        onExport={handleExport}
+        onCopyJSON={handleCopyJSON}
+        onSave={handleSubmit}
+        onVisualize={handleVisualize}
+        hasAnswers={Object.keys(answers).length > 0}
+        historyCount={historyRecords.length}
+      />
 
       {toast && (
         <div className={`toast-notification toast-${toast.type}`}>

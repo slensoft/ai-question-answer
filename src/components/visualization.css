@@ -1,0 +1,216 @@
+/* 可视化面板样式 */
+
+.visualization-panel {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.generate-visualization-btn {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.generate-visualization-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.generate-visualization-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.visualization-error {
+  padding: 1rem;
+  background: #fee;
+  border-left: 4px solid #f44;
+  border-radius: 4px;
+  margin-top: 1rem;
+}
+
+.visualization-display {
+  margin-top: 1rem;
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.visualization-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.visualization-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #333;
+}
+
+.visualization-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-btn {
+  padding: 0.5rem 1rem;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+  background: #f8f9fa;
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.visualization-content {
+  min-height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background: #fafbfc;
+  border-radius: 8px;
+}
+
+.mermaid-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.mermaid-container svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.mermaid-loading {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+}
+
+.loading-spinner {
+  font-size: 1rem;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.mermaid-error {
+  padding: 2rem;
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 8px;
+  color: #856404;
+}
+
+.mermaid-error details {
+  margin-top: 1rem;
+}
+
+.mermaid-error summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.mermaid-error pre {
+  margin-top: 0.5rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-size: 0.875rem;
+}
+
+.mermaid-code-details {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.mermaid-code-details summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #667eea;
+  user-select: none;
+}
+
+.mermaid-code-details summary:hover {
+  color: #764ba2;
+}
+
+.mermaid-code {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #282c34;
+  color: #abb2bf;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.mermaid-code code {
+  color: inherit;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .visualization-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .visualization-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .action-btn {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .visualization-content {
+    padding: 1rem;
+  }
+}
+
+/* 可视化区域容器 */
+.visualization-section {
+  margin-top: 2rem;
+  padding: 0 1.5rem 1.5rem;
+}
+
+/* 与practice-compact.css的样式协调 */
+.practice-view-compact .visualization-section {
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
