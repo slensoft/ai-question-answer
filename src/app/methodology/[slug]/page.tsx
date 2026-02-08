@@ -3,7 +3,6 @@
 import { useRouter } from 'next/navigation';
 import { methodologies } from '@/lib/methodology-data';
 import PracticeView from '@/components/PracticeView';
-import MethodologyNav from '@/components/MethodologyNav';
 import { use } from 'react';
 
 interface PageProps {
@@ -31,7 +30,6 @@ export default function MethodologyDetailPage({ params }: PageProps) {
           <p>解码后 slug: {slug}</p>
           <p>可用的方法论: {Object.keys(methodologies).join(', ')}</p>
         </div>
-        <MethodologyNav />
         <div className="methodology-content">
           <button className="btn btn-secondary" onClick={handleBack}>
             ← 返回上一页
@@ -47,8 +45,6 @@ export default function MethodologyDetailPage({ params }: PageProps) {
         <h1>🎯 {methodologies[slug].name}</h1>
         <p>{methodologies[slug].description}</p>
       </div>
-
-      <MethodologyNav />
 
       <div className="methodology-content">
         <PracticeView

@@ -6,7 +6,6 @@ import { getCurrentUser, getUserStats } from '@/api/user';
 import { getAllPracticeRecords } from '@/api/practice';
 import { User, UserStats } from '@/types/user';
 import { PracticeRecord } from '@/types/methodology';
-import MethodologyNav from '@/components/MethodologyNav';
 import './user.css';
 
 export default function UserCenterPage() {
@@ -49,7 +48,6 @@ export default function UserCenterPage() {
         <div className="methodology-header">
           <h1>👤 用户中心</h1>
         </div>
-        <MethodologyNav />
         <div className="methodology-content">
           <div className="loading">加载中...</div>
         </div>
@@ -63,8 +61,6 @@ export default function UserCenterPage() {
         <h1>👤 用户中心</h1>
         <p>查看你的学习记录和统计数据</p>
       </div>
-
-      <MethodologyNav />
 
       <div className="methodology-content">
         {/* 用户信息卡片 */}

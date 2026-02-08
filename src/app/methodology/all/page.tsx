@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import MethodologyNav from '@/components/MethodologyNav';
 import MethodologyGrid from '@/components/MethodologyGrid';
 import SearchFilter from '@/components/SearchFilter';
 import '../methodology.css';
@@ -22,8 +21,6 @@ export default function AllMethodologiesPage() {
         <h1>📚 所有方法论</h1>
         <p>浏览完整的方法论资源库，了解每个方法的特点和适用场景</p>
       </div>
-
-      <MethodologyNav />
 
       <div className="methodology-content">
         <SearchFilter

@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import MethodologyNav from '@/components/MethodologyNav';
 import './methodology.css';
 
 export default function MethodologyPage() {
@@ -11,8 +10,6 @@ export default function MethodologyPage() {
         <h1>🎯 提问方法论学习平台</h1>
         <p>通过实践掌握15种核心提问与思考方法</p>
       </div>
-
-      <MethodologyNav />
 
       <div className="methodology-content">
         <div className="home-intro">

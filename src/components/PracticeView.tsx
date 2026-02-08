@@ -37,6 +37,7 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
 
   const [context, setContext] = useState('');
   const [answers, setAnswers] = useState<Record<number, string>>({});
+  const [selectedQuickOptions, setSelectedQuickOptions] = useState<Record<number, Set<string>>>({});
   const [aiSuggestions, setAiSuggestions] = useState<Record<number, AISuggestion[]>>({});
   const [loadingAI, setLoadingAI] = useState<Record<number, boolean>>({});
   const [autoLoadedAI, setAutoLoadedAI] = useState<Record<number, boolean>>({});
@@ -127,34 +128,82 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
     const suggestions = aiSuggestions[questionIndex];
     if (!suggestions) return;
 
-    const selectedText = suggestions[suggestionIndex].text;
+    const suggestion = suggestions[suggestionIndex];
+    const selectedText = suggestion.text;
     const currentAnswer = answers[questionIndex] || '';
     
-    // 将选中的建议添加到答案中
-    const newAnswer = currentAnswer 
-      ? `${currentAnswer}\n\n${selectedText}` 
-      : selectedText;
+    // 检查是否已选中
+    const isSelected = suggestion.selected;
     
-    handleAnswerChange(questionIndex, newAnswer);
-    
-    // 标记为已选中
-    setAiSuggestions(prev => ({
-      ...prev,
-      [questionIndex]: suggestions.map((s, i) => 
-        i === suggestionIndex ? { ...s, selected: true } : s
-      )
-    }));
+    if (isSelected) {
+      // 取消选中：从答案中移除该建议
+      // 使用双换行符分割，移除该建议，然后重新组合
+      const parts = currentAnswer.split('\n\n').filter(part => part.trim() !== selectedText.trim());
+      const newAnswer = parts.join('\n\n');
+      
+      handleAnswerChange(questionIndex, newAnswer);
+      
+      // 标记为未选中
+      setAiSuggestions(prev => ({
+        ...prev,
+        [questionIndex]: suggestions.map((s, i) => 
+          i === suggestionIndex ? { ...s, selected: false } : s
+        )
+      }));
+    } else {
+      // 选中：将建议添加到答案中
+      const newAnswer = currentAnswer 
+        ? `${currentAnswer}\n\n${selectedText}` 
+        : selectedText;
+      
+      handleAnswerChange(questionIndex, newAnswer);
+      
+      // 标记为已选中
+      setAiSuggestions(prev => ({
+        ...prev,
+        [questionIndex]: suggestions.map((s, i) => 
+          i === suggestionIndex ? { ...s, selected: true } : s
+        )
+      }));
+    }
   };
 
   const selectQuickOption = (questionIndex: number, option: string) => {
     const currentAnswer = answers[questionIndex] || '';
+    const selectedOptions = selectedQuickOptions[questionIndex] || new Set<string>();
     
-    // 如果答案为空，直接设置；否则追加
-    const newAnswer = currentAnswer 
-      ? `${currentAnswer}; ${option}` 
-      : option;
+    // 检查是否已选中
+    const isSelected = selectedOptions.has(option);
     
-    handleAnswerChange(questionIndex, newAnswer);
+    if (isSelected) {
+      // 取消选中：从答案中移除该选项
+      const newSelectedOptions = new Set(selectedOptions);
+      newSelectedOptions.delete(option);
+      
+      // 将答案按分号分割，移除该选项，然后重新组合
+      const parts = currentAnswer.split('; ').filter(part => part.trim() !== option.trim());
+      const newAnswer = parts.join('; ');
+      
+      handleAnswerChange(questionIndex, newAnswer);
+      setSelectedQuickOptions(prev => ({
+        ...prev,
+        [questionIndex]: newSelectedOptions
+      }));
+    } else {
+      // 选中：添加到答案中
+      const newAnswer = currentAnswer 
+        ? `${currentAnswer}; ${option}` 
+        : option;
+      
+      const newSelectedOptions = new Set(selectedOptions);
+      newSelectedOptions.add(option);
+      
+      handleAnswerChange(questionIndex, newAnswer);
+      setSelectedQuickOptions(prev => ({
+        ...prev,
+        [questionIndex]: newSelectedOptions
+      }));
+    }
   };
 
   const handleSubmit = async () => {
@@ -195,6 +244,7 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
       // 清空表单
       setContext('');
       setAnswers({});
+      setSelectedQuickOptions({});
       setReflection('');
     } catch (error) {
       console.error('Failed to save record:', error);
@@ -291,18 +341,21 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
                         <div className="quick-options">
                           <div className="quick-options-label">💡 快速选择：</div>
                           <div className="quick-options-grid">
-                            {quickOptions.map((option, oi) => (
-                              <button
-                                key={oi}
-                                className="quick-option-btn"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  selectQuickOption(i, option);
-                                }}
-                              >
-                                {option}
-                              </button>
-                            ))}
+                            {quickOptions.map((option, oi) => {
+                              const isSelected = selectedQuickOptions[i]?.has(option) || false;
+                              return (
+                                <button
+                                  key={oi}
+                                  className={`quick-option-btn ${isSelected ? 'selected' : ''}`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    selectQuickOption(i, option);
+                                  }}
+                                >
+                                  {option}
+                                </button>
+                              );
+                            })}
                           </div>
                         </div>
                       )}

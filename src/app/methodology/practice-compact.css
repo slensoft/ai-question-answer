@@ -148,6 +148,8 @@
   font-family: inherit;
   resize: none;
   transition: all 0.2s;
+  color: #1f2937;
+  background: #ffffff;
 }
 
 .compact-textarea::placeholder {
@@ -414,6 +416,18 @@
   border-color: #667eea;
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(102,126,234,0.2);
+}
+
+.quick-option-btn.selected {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+  box-shadow: 0 2px 8px rgba(102,126,234,0.3);
+}
+
+.quick-option-btn.selected:hover {
+  background: #5568d3;
+  border-color: #5568d3;
 }
 
 .quick-option-btn:active {
