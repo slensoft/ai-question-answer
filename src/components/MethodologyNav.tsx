@@ -8,6 +8,7 @@ export default function MethodologyNav() {
 
   const navItems = [
     { href: '/methodology', label: '首页', icon: '🏠' },
+    { href: '/ai-guide', label: 'AI 引导', icon: '🤖', highlight: true },
     { href: '/methodology/scenarios', label: '按场景选择', icon: '🎯' },
     { href: '/methodology/decision-tree', label: '智能决策树', icon: '🌳' },
     { href: '/methodology/all', label: '所有方法论', icon: '📚' },
@@ -20,10 +21,11 @@ export default function MethodologyNav() {
           <Link
             key={item.href}
             href={item.href}
-            className={`nav-item ${pathname === item.href ? 'active' : ''}`}
+            className={`nav-item ${pathname === item.href ? 'active' : ''} ${item.highlight ? 'highlight' : ''}`}
           >
             <span className="nav-icon">{item.icon}</span>
             <span className="nav-label">{item.label}</span>
+            {item.highlight && <span className="badge">NEW</span>}
           </Link>
         ))}
       </div>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { getMethodologyByKey } from '@/api/methodology';
 import { usePracticeHistory } from '@/hooks/usePracticeHistory';
-import { QuestionAnswer, Methodology } from '@/types/methodology';
+import { QuestionAnswer, Methodology, Question } from '@/types/methodology';
 import { generateAISuggestions } from '@/api/ai';
 import '../app/methodology/practice-compact.css';
 
@@ -17,6 +17,19 @@ interface AISuggestion {
   selected: boolean;
 }
 
+// 辅助函数：将问题转换为统一格式
+const normalizeQuestion = (q: string | Question): Question => {
+  if (typeof q === 'string') {
+    return { text: q };
+  }
+  return q;
+};
+
+// 辅助函数：获取问题文本
+const getQuestionText = (q: string | Question): string => {
+  return typeof q === 'string' ? q : q.text;
+};
+
 export default function PracticeView({ methodologyKey, onBack }: PracticeViewProps) {
   const [method, setMethod] = useState<Methodology | null>(null);
   const [loading, setLoading] = useState(true);
@@ -26,6 +39,7 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [aiSuggestions, setAiSuggestions] = useState<Record<number, AISuggestion[]>>({});
   const [loadingAI, setLoadingAI] = useState<Record<number, boolean>>({});
+  const [autoLoadedAI, setAutoLoadedAI] = useState<Record<number, boolean>>({});
   const [reflection, setReflection] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
   const [expandedQuestions, setExpandedQuestions] = useState<Record<number, boolean>>({});
@@ -59,12 +73,24 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
   };
 
   const toggleQuestion = (index: number) => {
-    setExpandedQuestions(prev => ({ ...prev, [index]: !prev[index] }));
+    const isExpanding = !expandedQuestions[index];
+    setExpandedQuestions(prev => ({ ...prev, [index]: isExpanding }));
+    
+    // 当展开问题且有问题描述时，自动加载AI建议
+    if (isExpanding && context.trim() && !autoLoadedAI[index] && !aiSuggestions[index]) {
+      const question = method?.questions[index];
+      if (question) {
+        const questionText = getQuestionText(question);
+        generateAISuggestionsForQuestion(index, questionText, true);
+      }
+    }
   };
 
-  const generateAISuggestionsForQuestion = async (questionIndex: number, question: string) => {
+  const generateAISuggestionsForQuestion = async (questionIndex: number, question: string, isAuto = false) => {
     if (!context.trim()) {
-      alert('请先填写问题描述，AI才能提供相关建议');
+      if (!isAuto) {
+        alert('请先填写问题描述，AI才能提供相关建议');
+      }
       return;
     }
 
@@ -84,9 +110,14 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
       }));
       
       setAiSuggestions(prev => ({ ...prev, [questionIndex]: suggestions }));
+      if (isAuto) {
+        setAutoLoadedAI(prev => ({ ...prev, [questionIndex]: true }));
+      }
     } catch (error) {
       console.error('Failed to generate AI suggestions:', error);
-      alert('AI建议生成失败，请重试');
+      if (!isAuto) {
+        alert('AI建议生成失败，请重试');
+      }
     } finally {
       setLoadingAI(prev => ({ ...prev, [questionIndex]: false }));
     }
@@ -115,6 +146,17 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
     }));
   };
 
+  const selectQuickOption = (questionIndex: number, option: string) => {
+    const currentAnswer = answers[questionIndex] || '';
+    
+    // 如果答案为空，直接设置；否则追加
+    const newAnswer = currentAnswer 
+      ? `${currentAnswer}; ${option}` 
+      : option;
+    
+    handleAnswerChange(questionIndex, newAnswer);
+  };
+
   const handleSubmit = async () => {
     if (!context.trim()) {
       alert('请填写问题描述！');
@@ -123,7 +165,7 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
 
     const questionAnswers: QuestionAnswer[] = method.questions.map((q, i) => ({
       questionNumber: i + 1,
-      question: q,
+      question: getQuestionText(q),
       answer: answers[i] || ''
     }));
 
@@ -223,64 +265,103 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
           </div>
 
           <div className="questions-accordion">
-            {method.questions.map((q, i) => (
-              <div key={i} className={`question-card ${expandedQuestions[i] ? 'expanded' : ''}`}>
-                <div className="question-header" onClick={() => toggleQuestion(i)}>
-                  <div className="question-title">
-                    <span className="question-num">Q{i + 1}</span>
-                    <span className="question-text">{q}</span>
-                  </div>
-                  <div className="question-status">
-                    {answers[i]?.trim() && <span className="answered-badge">✓</span>}
-                    <span className="expand-icon">{expandedQuestions[i] ? '−' : '+'}</span>
-                  </div>
-                </div>
-
-                {expandedQuestions[i] && (
-                  <div className="question-body">
-                    <textarea
-                      className="compact-answer"
-                      value={answers[i] || ''}
-                      onChange={(e) => handleAnswerChange(i, e.target.value)}
-                      placeholder="写下你的思考..."
-                      rows={3}
-                      onClick={(e) => e.stopPropagation()}
-                    />
-
-                    <div className="ai-section">
-                      <button 
-                        className="btn-ai"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          generateAISuggestionsForQuestion(i, q);
-                        }}
-                        disabled={loadingAI[i]}
-                      >
-                        {loadingAI[i] ? '🤖 AI思考中...' : '✨ AI建议'}
-                      </button>
-
-                      {aiSuggestions[i] && aiSuggestions[i].length > 0 && (
-                        <div className="ai-suggestions">
-                          {aiSuggestions[i].map((suggestion, si) => (
-                            <div 
-                              key={si} 
-                              className={`suggestion-chip ${suggestion.selected ? 'selected' : ''}`}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                selectAISuggestion(i, si);
-                              }}
-                            >
-                              {suggestion.selected && <span className="check-icon">✓</span>}
-                              {suggestion.text}
-                            </div>
-                          ))}
-                        </div>
-                      )}
+            {method.questions.map((q, i) => {
+              const question = normalizeQuestion(q);
+              const questionText = question.text;
+              const quickOptions = question.quickOptions || [];
+              const placeholder = question.placeholder || '写下你的思考，或点击上方快速选择...';
+              
+              return (
+                <div key={i} className={`question-card ${expandedQuestions[i] ? 'expanded' : ''}`}>
+                  <div className="question-header" onClick={() => toggleQuestion(i)}>
+                    <div className="question-title">
+                      <span className="question-num">Q{i + 1}</span>
+                      <span className="question-text">{questionText}</span>
+                    </div>
+                    <div className="question-status">
+                      {answers[i]?.trim() && <span className="answered-badge">✓</span>}
+                      <span className="expand-icon">{expandedQuestions[i] ? '−' : '+'}</span>
                     </div>
                   </div>
-                )}
-              </div>
-            ))}
+
+                  {expandedQuestions[i] && (
+                    <div className="question-body">
+                      {/* 快速选择选项 - 仅当有选项时显示 */}
+                      {quickOptions.length > 0 && (
+                        <div className="quick-options">
+                          <div className="quick-options-label">💡 快速选择：</div>
+                          <div className="quick-options-grid">
+                            {quickOptions.map((option, oi) => (
+                              <button
+                                key={oi}
+                                className="quick-option-btn"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  selectQuickOption(i, option);
+                                }}
+                              >
+                                {option}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      <textarea
+                        className="compact-answer"
+                        value={answers[i] || ''}
+                        onChange={(e) => handleAnswerChange(i, e.target.value)}
+                        placeholder={placeholder}
+                        rows={3}
+                        onClick={(e) => e.stopPropagation()}
+                      />
+
+                      {/* AI建议区域 - 自动显示 */}
+                      <div className="ai-section">
+                        {loadingAI[i] && (
+                          <div className="ai-loading">
+                            🤖 AI正在分析你的问题描述...
+                          </div>
+                        )}
+
+                        {aiSuggestions[i] && aiSuggestions[i].length > 0 && (
+                          <div className="ai-suggestions-container">
+                            <div className="ai-suggestions-label">✨ AI建议：</div>
+                            <div className="ai-suggestions">
+                              {aiSuggestions[i].map((suggestion, si) => (
+                                <div 
+                                  key={si} 
+                                  className={`suggestion-chip ${suggestion.selected ? 'selected' : ''}`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    selectAISuggestion(i, si);
+                                  }}
+                                >
+                                  {suggestion.selected && <span className="check-icon">✓</span>}
+                                  {suggestion.text}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {!loadingAI[i] && !aiSuggestions[i] && context.trim() && (
+                          <button 
+                            className="btn-ai-manual"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              generateAISuggestionsForQuestion(i, questionText);
+                            }}
+                          >
+                            🔄 重新生成AI建议
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

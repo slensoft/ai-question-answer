@@ -320,6 +320,11 @@ body {
     color: #000;
 }
 
+.form-group textarea::placeholder {
+    color: #6b7280;
+    opacity: 1;
+}
+
 .form-group textarea:focus {
     outline: none;
     border-color: #667eea;
@@ -333,6 +338,11 @@ body {
     font-size: 1em;
     transition: border-color 0.3s;
     color: #000;
+}
+
+.form-group input::placeholder {
+    color: #6b7280;
+    opacity: 1;
 }
 
 .form-group input:focus {
@@ -524,7 +534,8 @@ body {
 }
 
 .question-answer::placeholder {
-    color: #666;
+    color: #6b7280;
+    opacity: 1;
 }
 
 /* 搜索和筛选 */
@@ -549,6 +560,11 @@ body {
     font-size: 1em;
     transition: all 0.3s;
     color: #000;
+}
+
+.search-box input::placeholder {
+    color: #6b7280;
+    opacity: 1;
 }
 
 .search-box input:focus {

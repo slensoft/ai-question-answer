@@ -2,6 +2,12 @@
  * 方法论相关类型定义
  */
 
+export interface Question {
+  text: string;
+  quickOptions?: string[]; // 快速选择选项
+  placeholder?: string; // 输入框提示文字
+}
+
 export interface Methodology {
   name: string;
   category: string;
@@ -9,7 +15,7 @@ export interface Methodology {
   scenarios: string[];
   difficulty: string;
   tags: string[];
-  questions: string[];
+  questions: (string | Question)[]; // 兼容旧格式和新格式
   example: string;
 }
 
