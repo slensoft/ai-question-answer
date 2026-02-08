@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { scenarioNeeds } from '@/lib/methodology-data';
+import { useState, useEffect } from 'react';
+import { getScenarioNeeds } from '@/api/methodology';
+import { ScenarioNeed } from '@/types/methodology';
 
 interface ScenarioSectionProps {
   onSelectMethodology: (key: string) => void;
@@ -10,6 +11,24 @@ interface ScenarioSectionProps {
 export default function ScenarioSection({ onSelectMethodology }: ScenarioSectionProps) {
   const [showModal, setShowModal] = useState(false);
   const [selectedScenario, setSelectedScenario] = useState<string>('');
+  const [scenarioNeeds, setScenarioNeeds] = useState<Record<string, ScenarioNeed[]>>({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadScenarioNeeds();
+  }, []);
+
+  const loadScenarioNeeds = async () => {
+    try {
+      setLoading(true);
+      const data = await getScenarioNeeds();
+      setScenarioNeeds(data);
+    } catch (error) {
+      console.error('Failed to load scenario needs:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const scenarios = [
     { id: 'work', icon: '💼', name: '工作场景', desc: '向领导汇报、项目复盘、团队会议、跨部门协作等' },
@@ -27,6 +46,15 @@ export default function ScenarioSection({ onSelectMethodology }: ScenarioSection
     setShowModal(false);
     onSelectMethodology(methodKey);
   };
+
+  if (loading) {
+    return (
+      <div className="scenario-section">
+        <h2>🎯 按场景选择</h2>
+        <div className="loading-text">加载中...</div>
+      </div>
+    );
+  }
 
   return (
     <>

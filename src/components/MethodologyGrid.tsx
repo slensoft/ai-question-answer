@@ -1,4 +1,8 @@
-import { methodologies } from '@/lib/methodology-data';
+'use client';
+
+import { useState, useEffect } from 'react';
+import { searchMethodologies } from '@/api/methodology';
+import { Methodology } from '@/types/methodology';
 
 interface MethodologyGridProps {
   searchTerm: string;
@@ -11,16 +15,35 @@ export default function MethodologyGrid({
   selectedCategory,
   onSelectMethodology
 }: MethodologyGridProps) {
-  const filteredMethodologies = Object.entries(methodologies).filter(([key, method]) => {
-    const matchesSearch = searchTerm === '' ||
-      method.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      method.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      method.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+  const [methodologies, setMethodologies] = useState<Record<string, Methodology>>({});
+  const [loading, setLoading] = useState(true);
 
-    const matchesCategory = selectedCategory === 'all' || method.category === selectedCategory;
+  useEffect(() => {
+    loadMethodologies();
+  }, [searchTerm, selectedCategory]);
 
-    return matchesSearch && matchesCategory;
-  });
+  const loadMethodologies = async () => {
+    try {
+      setLoading(true);
+      const data = await searchMethodologies(searchTerm, selectedCategory);
+      setMethodologies(data);
+    } catch (error) {
+      console.error('Failed to load methodologies:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="home-section">
+        <h2>📚 所有方法论</h2>
+        <div className="loading-text">加载中...</div>
+      </div>
+    );
+  }
+
+  const filteredMethodologies = Object.entries(methodologies);
 
   return (
     <div className="home-section">

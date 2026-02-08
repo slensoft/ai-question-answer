@@ -1,48 +1,37 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-
-interface QuestionAnswer {
-  questionNumber: number;
-  question: string;
-  answer: string;
-}
-
-export interface PracticeRecord {
-  timestamp: string;
-  methodology: string;
-  methodologyName: string;
-  methodologyCategory: string;
-  methodologyDescription: string;
-  methodologyTags: string[];
-  context: string;
-  questionAnswers: QuestionAnswer[];
-  reflection: string;
-}
+import { PracticeRecord } from '@/types/methodology';
+import { getAllPracticeRecords, savePracticeRecord } from '@/api/practice';
 
 export function usePracticeHistory() {
   const [history, setHistory] = useState<PracticeRecord[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 从 localStorage 加载历史记录
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('methodologyPractice');
-      if (saved) {
-        try {
-          setHistory(JSON.parse(saved));
-        } catch (error) {
-          console.error('Failed to parse history:', error);
-        }
-      }
-    }
+    loadHistory();
   }, []);
 
-  const saveRecord = (record: PracticeRecord) => {
-    const newHistory = [record, ...history];
-    setHistory(newHistory);
-    
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('methodologyPractice', JSON.stringify(newHistory));
+  const loadHistory = async () => {
+    try {
+      setLoading(true);
+      const records = await getAllPracticeRecords();
+      setHistory(records);
+    } catch (error) {
+      console.error('Failed to load practice history:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const saveRecord = async (record: PracticeRecord) => {
+    try {
+      await savePracticeRecord(record);
+      // 重新加载历史记录
+      await loadHistory();
+    } catch (error) {
+      console.error('Failed to save practice record:', error);
+      throw error;
     }
   };
 
@@ -60,6 +49,9 @@ export function usePracticeHistory() {
   return {
     history,
     saveRecord,
-    downloadHistory
+    downloadHistory,
+    loading,
+    refresh: loadHistory
   };
 }
+

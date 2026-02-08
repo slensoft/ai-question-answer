@@ -432,6 +432,7 @@ body {
     padding: 20px;
     margin-bottom: 15px;
     border-left: 4px solid #667eea;
+    color: #000;
 }
 
 .history-item .timestamp {

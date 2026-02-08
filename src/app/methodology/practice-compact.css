@@ -1,0 +1,493 @@
+/* 紧凑版实践页面样式 */
+
+.practice-view-compact {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* 顶部操作栏 */
+.practice-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  flex-shrink: 0;
+}
+
+.btn-back {
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: all 0.2s;
+}
+
+.btn-back:hover {
+  background: rgba(255,255,255,0.3);
+  transform: translateX(-2px);
+}
+
+.method-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  justify-content: center;
+}
+
+.method-icon {
+  font-size: 1.5em;
+}
+
+.method-name {
+  font-size: 1.2em;
+  font-weight: 600;
+}
+
+.method-difficulty {
+  background: rgba(255,255,255,0.2);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.85em;
+}
+
+.btn-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-compact {
+  padding: 8px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-save {
+  background: #4caf50;
+  color: white;
+}
+
+.btn-save:hover {
+  background: #45a049;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(76,175,80,0.3);
+}
+
+/* 成功提示 */
+.alert-compact {
+  padding: 12px 20px;
+  margin: 0;
+  text-align: center;
+  font-size: 0.95em;
+  animation: slideDown 0.3s ease;
+}
+
+.alert-success {
+  background: #d4edda;
+  color: #155724;
+  border-bottom: 2px solid #4caf50;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 主内容区域 - 网格布局 */
+.practice-content-grid {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 0;
+  height: calc(100vh - 60px);
+  overflow: hidden;
+}
+
+/* 左侧边栏 */
+.practice-sidebar {
+  background: #f8f9fa;
+  padding: 20px;
+  overflow-y: auto;
+  border-right: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.compact-label {
+  display: block;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 0.95em;
+}
+
+.compact-textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 0.9em;
+  font-family: inherit;
+  resize: none;
+  transition: all 0.2s;
+}
+
+.compact-textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+}
+
+.context-box {
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.example-compact {
+  background: #fff3e0;
+  padding: 16px;
+  border-radius: 12px;
+  border-left: 4px solid #ff9800;
+}
+
+.example-header {
+  font-weight: 600;
+  color: #e65100;
+  margin-bottom: 8px;
+  font-size: 0.9em;
+}
+
+.example-text {
+  color: #555;
+  font-size: 0.85em;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.reflection-box {
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* 右侧问题区域 */
+.questions-compact {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.questions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  background: white;
+  border-bottom: 2px solid #e0e0e0;
+  flex-shrink: 0;
+}
+
+.questions-header h3 {
+  margin: 0;
+  color: #333;
+  font-size: 1.1em;
+}
+
+.questions-count {
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.questions-accordion {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 24px;
+}
+
+/* 问题卡片 */
+.question-card {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  transition: all 0.2s;
+  overflow: hidden;
+}
+
+.question-card:hover {
+  border-color: #667eea;
+  box-shadow: 0 4px 12px rgba(102,126,234,0.1);
+}
+
+.question-card.expanded {
+  border-color: #667eea;
+  box-shadow: 0 4px 16px rgba(102,126,234,0.15);
+}
+
+.question-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.question-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.question-num {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85em;
+  flex-shrink: 0;
+}
+
+.question-text {
+  color: #333;
+  font-size: 0.95em;
+  line-height: 1.4;
+}
+
+.question-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.answered-badge {
+  background: #4caf50;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8em;
+}
+
+.expand-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #f0f4ff;
+  color: #667eea;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2em;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.question-card:hover .expand-icon {
+  background: #667eea;
+  color: white;
+}
+
+/* 问题展开内容 */
+.question-body {
+  padding: 0 20px 20px 20px;
+  animation: expandDown 0.2s ease;
+}
+
+@keyframes expandDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.compact-answer {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 0.9em;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 80px;
+  margin-bottom: 12px;
+  transition: all 0.2s;
+}
+
+.compact-answer:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+}
+
+/* AI建议区域 */
+.ai-section {
+  margin-top: 12px;
+}
+
+.btn-ai {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: 500;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.btn-ai:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+}
+
+.btn-ai:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.ai-suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.suggestion-chip {
+  background: #f0f4ff;
+  border: 2px solid #e3f2fd;
+  padding: 12px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85em;
+  line-height: 1.5;
+  color: #333;
+  transition: all 0.2s;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.suggestion-chip:hover {
+  background: #e3f2fd;
+  border-color: #667eea;
+  transform: translateX(4px);
+}
+
+.suggestion-chip.selected {
+  background: #e8f5e9;
+  border-color: #4caf50;
+}
+
+.check-icon {
+  background: #4caf50;
+  color: white;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7em;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+  .practice-content-grid {
+    grid-template-columns: 320px 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .practice-content-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .practice-sidebar {
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+    max-height: 40vh;
+  }
+
+  .method-title {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .method-name {
+    font-size: 1em;
+  }
+}
+
+/* 滚动条样式 */
+.practice-sidebar::-webkit-scrollbar,
+.questions-accordion::-webkit-scrollbar {
+  width: 8px;
+}
+
+.practice-sidebar::-webkit-scrollbar-track,
+.questions-accordion::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.practice-sidebar::-webkit-scrollbar-thumb,
+.questions-accordion::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+  border-radius: 4px;
+}
+
+.practice-sidebar::-webkit-scrollbar-thumb:hover,
+.questions-accordion::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0;
+}

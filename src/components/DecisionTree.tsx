@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { decisionTree } from '@/lib/methodology-data';
+import { useState, useEffect } from 'react';
+import { getDecisionTree } from '@/api/methodology';
+import { DecisionTreeNode } from '@/types/methodology';
 
 interface DecisionTreeProps {
   onSelectMethodology: (key: string) => void;
@@ -9,8 +10,24 @@ interface DecisionTreeProps {
 
 export default function DecisionTree({ onSelectMethodology }: DecisionTreeProps) {
   const [currentNode, setCurrentNode] = useState('start');
+  const [decisionTree, setDecisionTree] = useState<Record<string, DecisionTreeNode>>({});
+  const [loading, setLoading] = useState(true);
 
-  const node = decisionTree[currentNode];
+  useEffect(() => {
+    loadDecisionTree();
+  }, []);
+
+  const loadDecisionTree = async () => {
+    try {
+      setLoading(true);
+      const data = await getDecisionTree();
+      setDecisionTree(data);
+    } catch (error) {
+      console.error('Failed to load decision tree:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleOptionClick = (next?: string, method?: string) => {
     if (method) {
@@ -23,6 +40,26 @@ export default function DecisionTree({ onSelectMethodology }: DecisionTreeProps)
   const handleReset = () => {
     setCurrentNode('start');
   };
+
+  if (loading) {
+    return (
+      <div className="decision-tree">
+        <h2>🌳 智能决策树</h2>
+        <div className="loading-text">加载中...</div>
+      </div>
+    );
+  }
+
+  const node = decisionTree[currentNode];
+
+  if (!node) {
+    return (
+      <div className="decision-tree">
+        <h2>🌳 智能决策树</h2>
+        <div>节点不存在</div>
+      </div>
+    );
+  }
 
   return (
     <div className="decision-tree">

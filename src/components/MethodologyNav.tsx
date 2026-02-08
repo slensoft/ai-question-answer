@@ -15,16 +15,27 @@ export default function MethodologyNav() {
 
   return (
     <nav className="methodology-nav">
-      {navItems.map((item) => (
+      <div className="nav-left">
+        {navItems.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={`nav-item ${pathname === item.href ? 'active' : ''}`}
+          >
+            <span className="nav-icon">{item.icon}</span>
+            <span className="nav-label">{item.label}</span>
+          </Link>
+        ))}
+      </div>
+      <div className="nav-right">
         <Link
-          key={item.href}
-          href={item.href}
-          className={`nav-item ${pathname === item.href ? 'active' : ''}`}
+          href="/user"
+          className={`nav-item user-center ${pathname === '/user' ? 'active' : ''}`}
         >
-          <span className="nav-icon">{item.icon}</span>
-          <span className="nav-label">{item.label}</span>
+          <span className="nav-icon">👤</span>
+          <span className="nav-label">用户中心</span>
         </Link>
-      ))}
+      </div>
     </nav>
   );
 }

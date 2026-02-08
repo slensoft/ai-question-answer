@@ -1,0 +1,47 @@
+/**
+ * 方法论相关类型定义
+ */
+
+export interface Methodology {
+  name: string;
+  category: string;
+  description: string;
+  scenarios: string[];
+  difficulty: string;
+  tags: string[];
+  questions: string[];
+  example: string;
+}
+
+export interface ScenarioNeed {
+  id: string;
+  name: string;
+  methods: string[];
+}
+
+export interface DecisionTreeNode {
+  question: string;
+  options: Array<{
+    text: string;
+    next?: string;
+    method?: string;
+  }>;
+}
+
+export interface PracticeRecord {
+  timestamp: string;
+  methodology: string;
+  methodologyName: string;
+  methodologyCategory: string;
+  methodologyDescription: string;
+  methodologyTags: string[];
+  context: string;
+  questionAnswers: QuestionAnswer[];
+  reflection: string;
+}
+
+export interface QuestionAnswer {
+  questionNumber: number;
+  question: string;
+  answer: string;
+}

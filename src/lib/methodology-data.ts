@@ -1,29 +1,4 @@
-// 方法论数据类型
-export interface Methodology {
-  name: string;
-  category: string;
-  description: string;
-  scenarios: string[];
-  difficulty: string;
-  tags: string[];
-  questions: string[];
-  example: string;
-}
-
-export interface ScenarioNeed {
-  id: string;
-  name: string;
-  methods: string[];
-}
-
-export interface DecisionTreeNode {
-  question: string;
-  options: Array<{
-    text: string;
-    next?: string;
-    method?: string;
-  }>;
-}
+import { Methodology, ScenarioNeed, DecisionTreeNode } from '@/types/methodology';
 
 // 方法论数据
 export const methodologies: Record<string, Methodology> = {
