@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { getMethodologyByKey } from '@/api/methodology';
 import { usePracticeHistory } from '@/hooks/usePracticeHistory';
-import { QuestionAnswer, Methodology, Question } from '@/types/methodology';
+import { getPracticeRecordsByMethodology } from '@/api/practice';
+import { QuestionAnswer, Methodology, Question, PracticeRecord } from '@/types/methodology';
 import { generateAISuggestions } from '@/api/ai';
 import '../app/methodology/practice-compact.css';
 
@@ -31,6 +33,7 @@ const getQuestionText = (q: string | Question): string => {
 };
 
 export default function PracticeView({ methodologyKey, onBack }: PracticeViewProps) {
+  const searchParams = useSearchParams();
   const [method, setMethod] = useState<Methodology | null>(null);
   const [loading, setLoading] = useState(true);
   const { saveRecord } = usePracticeHistory();
@@ -44,6 +47,9 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
   const [reflection, setReflection] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
   const [expandedQuestions, setExpandedQuestions] = useState<Record<number, boolean>>({});
+  const [historyRecords, setHistoryRecords] = useState<PracticeRecord[]>([]);
+  const [showHistoryPrompt, setShowHistoryPrompt] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
   useEffect(() => {
     const loadMethodology = async () => {
@@ -51,6 +57,70 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
         setLoading(true);
         const data = await getMethodologyByKey(methodologyKey);
         setMethod(data);
+        
+        // 加载历史记录
+        const records = await getPracticeRecordsByMethodology(methodologyKey);
+        setHistoryRecords(records);
+        
+        // 检查 URL 参数中是否有 timestamp
+        const timestamp = searchParams.get('timestamp');
+        
+        if (timestamp) {
+          // 如果有 timestamp，查找对应的记录并回填
+          const targetRecord = records.find(r => r.timestamp === timestamp);
+          if (targetRecord && data) {
+            // 直接在这里回填数据，避免依赖问题
+            setContext(targetRecord.context);
+            
+            const newAnswers: Record<number, string> = {};
+            const newSelectedOptions: Record<number, Set<string>> = {};
+            
+            targetRecord.questionAnswers.forEach((qa) => {
+              const questionIndex = qa.questionNumber - 1;
+              newAnswers[questionIndex] = qa.answer;
+              
+              const question = data.questions[questionIndex];
+              if (question && typeof question !== 'string' && question.quickOptions) {
+                const selectedOpts = new Set<string>();
+                question.quickOptions.forEach(option => {
+                  if (qa.answer.includes(option)) {
+                    selectedOpts.add(option);
+                  }
+                });
+                if (selectedOpts.size > 0) {
+                  newSelectedOptions[questionIndex] = selectedOpts;
+                }
+              }
+            });
+            
+            setAnswers(newAnswers);
+            setSelectedQuickOptions(newSelectedOptions);
+            
+            if (targetRecord.reflection) {
+              setReflection(targetRecord.reflection);
+            }
+            
+            // 展开所有有答案的问题
+            const newExpanded: Record<number, boolean> = {};
+            Object.keys(newAnswers).forEach(key => {
+              newExpanded[parseInt(key)] = true;
+            });
+            setExpandedQuestions(newExpanded);
+            
+            // 不显示历史记录提示
+            setShowHistoryPrompt(false);
+          } else {
+            // 如果找不到记录，显示历史记录提示
+            if (records.length > 0) {
+              setShowHistoryPrompt(true);
+            }
+          }
+        } else {
+          // 如果没有 timestamp，显示历史记录提示
+          if (records.length > 0) {
+            setShowHistoryPrompt(true);
+          }
+        }
       } catch (error) {
         console.error('Failed to load methodology:', error);
       } finally {
@@ -59,7 +129,7 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
     };
     
     loadMethodology();
-  }, [methodologyKey]);
+  }, [methodologyKey, searchParams]);
 
   if (loading) {
     return <div className="loading-text">加载中...</div>;
@@ -68,6 +138,52 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
   if (!method) {
     return <div>方法论不存在</div>;
   }
+
+  const loadHistoryRecord = (record: PracticeRecord) => {
+    // 回填问题描述
+    setContext(record.context);
+    
+    // 回填答案
+    const newAnswers: Record<number, string> = {};
+    const newSelectedOptions: Record<number, Set<string>> = {};
+    
+    record.questionAnswers.forEach((qa) => {
+      const questionIndex = qa.questionNumber - 1;
+      newAnswers[questionIndex] = qa.answer;
+      
+      // 尝试恢复快速选项的选中状态
+      const question = method.questions[questionIndex];
+      if (question && typeof question !== 'string' && question.quickOptions) {
+        const selectedOpts = new Set<string>();
+        question.quickOptions.forEach(option => {
+          if (qa.answer.includes(option)) {
+            selectedOpts.add(option);
+          }
+        });
+        if (selectedOpts.size > 0) {
+          newSelectedOptions[questionIndex] = selectedOpts;
+        }
+      }
+    });
+    
+    setAnswers(newAnswers);
+    setSelectedQuickOptions(newSelectedOptions);
+    
+    // 回填反思
+    if (record.reflection) {
+      setReflection(record.reflection);
+    }
+    
+    // 关闭提示
+    setShowHistoryPrompt(false);
+    
+    // 展开所有有答案的问题
+    const newExpanded: Record<number, boolean> = {};
+    Object.keys(newAnswers).forEach(key => {
+      newExpanded[parseInt(key)] = true;
+    });
+    setExpandedQuestions(newExpanded);
+  };
 
   const handleAnswerChange = (index: number, value: string) => {
     setAnswers(prev => ({ ...prev, [index]: value }));
@@ -90,7 +206,7 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
   const generateAISuggestionsForQuestion = async (questionIndex: number, question: string, isAuto = false) => {
     if (!context.trim()) {
       if (!isAuto) {
-        alert('请先填写问题描述，AI才能提供相关建议');
+        showToast('请先填写问题描述，AI才能提供相关建议', 'info');
       }
       return;
     }
@@ -117,7 +233,7 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
     } catch (error) {
       console.error('Failed to generate AI suggestions:', error);
       if (!isAuto) {
-        alert('AI建议生成失败，请重试');
+        showToast('AI建议生成失败，请重试', 'error');
       }
     } finally {
       setLoadingAI(prev => ({ ...prev, [questionIndex]: false }));
@@ -206,9 +322,14 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
     }
   };
 
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
+
   const handleSubmit = async () => {
     if (!context.trim()) {
-      alert('请填写问题描述！');
+      showToast('请填写问题描述！', 'error');
       return;
     }
 
@@ -220,7 +341,7 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
 
     const hasAnswer = questionAnswers.some(qa => qa.answer.trim());
     if (!hasAnswer) {
-      alert('请至少回答一个问题！');
+      showToast('请至少回答一个问题！', 'error');
       return;
     }
 
@@ -238,8 +359,11 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
 
     try {
       await saveRecord(record);
-      setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 3000);
+      showToast(`✅ 已保存 ${Object.values(answers).filter(a => a.trim()).length} 个回答`, 'success');
+      
+      // 重新加载历史记录
+      const records = await getPracticeRecordsByMethodology(methodologyKey);
+      setHistoryRecords(records);
       
       // 清空表单
       setContext('');
@@ -248,7 +372,72 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
       setReflection('');
     } catch (error) {
       console.error('Failed to save record:', error);
-      alert('保存失败，请重试');
+      showToast('保存失败，请重试', 'error');
+    }
+  };
+
+  const handleExport = () => {
+    if (historyRecords.length === 0) {
+      showToast('当前方法论还没有历史记录！', 'error');
+      return;
+    }
+
+    // 准备导出数据
+    const exportData = {
+      methodology: methodologyKey,
+      methodologyName: method?.name,
+      exportDate: new Date().toISOString(),
+      totalRecords: historyRecords.length,
+      records: historyRecords
+    };
+
+    // 创建JSON字符串
+    const dataStr = JSON.stringify(exportData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    
+    // 创建下载链接
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    
+    // 生成文件名：方法论名称-日期.json
+    const fileName = `${method?.name || methodologyKey}-${new Date().toISOString().split('T')[0]}.json`;
+    link.download = fileName;
+    
+    // 触发下载
+    link.click();
+    
+    // 清理URL对象
+    URL.revokeObjectURL(url);
+    
+    // 显示成功提示
+    showToast(`📥 已导出 ${historyRecords.length} 条记录`, 'success');
+  };
+
+  const handleCopyJSON = async () => {
+    if (historyRecords.length === 0) {
+      showToast('当前方法论还没有历史记录！', 'error');
+      return;
+    }
+
+    // 准备导出数据
+    const exportData = {
+      methodology: methodologyKey,
+      methodologyName: method?.name,
+      exportDate: new Date().toISOString(),
+      totalRecords: historyRecords.length,
+      records: historyRecords
+    };
+
+    // 创建JSON字符串
+    const dataStr = JSON.stringify(exportData, null, 2);
+
+    try {
+      await navigator.clipboard.writeText(dataStr);
+      showToast(`📋 已复制 ${historyRecords.length} 条记录的 JSON 数据`, 'success');
+    } catch (error) {
+      console.error('Failed to copy to clipboard:', error);
+      showToast('复制失败，请重试', 'error');
     }
   };
 
@@ -264,15 +453,67 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
           <span className="method-difficulty">{method.difficulty}</span>
         </div>
         <div className="btn-actions">
+          <button 
+            className="btn-compact btn-export" 
+            onClick={handleExport}
+            title={`导出 ${historyRecords.length} 条历史记录`}
+          >
+            📥 导出记录 {historyRecords.length > 0 && `(${historyRecords.length})`}
+          </button>
+          <button 
+            className="btn-compact btn-copy-json" 
+            onClick={handleCopyJSON}
+            title={`复制 ${historyRecords.length} 条记录的 JSON 数据`}
+          >
+            📋 复制JSON
+          </button>
           <button className="btn-compact btn-save" onClick={handleSubmit}>
             💾 保存
           </button>
         </div>
       </div>
 
-      {showSuccess && (
-        <div className="alert-compact alert-success">
-          ✅ 已保存 {Object.values(answers).filter(a => a.trim()).length} 个回答
+      {toast && (
+        <div className={`toast-notification toast-${toast.type}`}>
+          {toast.message}
+        </div>
+      )}
+
+      {/* 历史记录提示 */}
+      {showHistoryPrompt && historyRecords.length > 0 && (
+        <div className="history-prompt">
+          <div className="history-prompt-header">
+            <span className="history-icon">📋</span>
+            <span className="history-title">发现 {historyRecords.length} 条历史记录</span>
+            <button 
+              className="btn-close-prompt"
+              onClick={() => setShowHistoryPrompt(false)}
+            >
+              ✕
+            </button>
+          </div>
+          <div className="history-list">
+            {historyRecords.slice(0, 3).map((record, index) => (
+              <div key={index} className="history-item">
+                <div className="history-item-info">
+                  <div className="history-context">
+                    {record.context.substring(0, 60)}
+                    {record.context.length > 60 ? '...' : ''}
+                  </div>
+                  <div className="history-meta">
+                    {new Date(record.timestamp).toLocaleString('zh-CN')} · 
+                    {record.questionAnswers.filter(qa => qa.answer).length} 个回答
+                  </div>
+                </div>
+                <button
+                  className="btn-load-history"
+                  onClick={() => loadHistoryRecord(record)}
+                >
+                  查看回填
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

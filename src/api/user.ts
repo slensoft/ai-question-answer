@@ -80,13 +80,34 @@ export async function getUserStats(): Promise<UserStats> {
     p => new Date(p.timestamp) > sevenDaysAgo
   ).length;
   
-  // 找出最常用的方法论
-  const methodologyCount: Record<string, number> = {};
+  // 统计所有方法论的使用次数
+  const methodologyCount: Record<string, { count: number; name: string; category: string; tags: string[] }> = {};
   practices.forEach(p => {
-    methodologyCount[p.methodology] = (methodologyCount[p.methodology] || 0) + 1;
+    if (!methodologyCount[p.methodology]) {
+      methodologyCount[p.methodology] = {
+        count: 0,
+        name: p.methodologyName,
+        category: p.methodologyCategory,
+        tags: p.methodologyTags || []
+      };
+    }
+    methodologyCount[p.methodology].count++;
   });
-  const favoriteMethodology = Object.entries(methodologyCount)
-    .sort(([, a], [, b]) => b - a)[0]?.[0];
+  
+  // 获取前5个最常用的方法论
+  const topMethodologies = Object.entries(methodologyCount)
+    .sort(([, a], [, b]) => b.count - a.count)
+    .slice(0, 5)
+    .map(([key, value]) => ({
+      key,
+      name: value.name,
+      category: value.category,
+      tags: value.tags,
+      count: value.count
+    }));
+  
+  // 找出最常用的方法论（保持向后兼容）
+  const favoriteMethodology = topMethodologies[0]?.key;
   
   // 计算连续练习天数
   const practiceStreak = calculatePracticeStreak(practices);
@@ -96,6 +117,7 @@ export async function getUserStats(): Promise<UserStats> {
     totalMethodologies: methodologies.size,
     recentActivity,
     favoriteMethodology,
+    topMethodologies,
     practiceStreak
   };
 }
