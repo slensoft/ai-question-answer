@@ -92,7 +92,7 @@ body {
 }
 
 .methodology-card .description {
-    color: #666;
+    color: #000;
     line-height: 1.6;
     font-size: 0.95em;
     margin-bottom: 15px;
@@ -157,7 +157,7 @@ body {
 }
 
 .scenario-card p {
-    color: #666;
+    color: #000;
     font-size: 0.9em;
     line-height: 1.5;
 }
@@ -200,6 +200,7 @@ body {
     cursor: pointer;
     transition: all 0.3s;
     border: 2px solid transparent;
+    color: #000;
 }
 
 .tree-option:hover {
@@ -316,6 +317,7 @@ body {
     resize: vertical;
     min-height: 100px;
     transition: border-color 0.3s;
+    color: #000;
 }
 
 .form-group textarea:focus {
@@ -330,6 +332,7 @@ body {
     border-radius: 10px;
     font-size: 1em;
     transition: border-color 0.3s;
+    color: #000;
 }
 
 .form-group input:focus {
@@ -351,7 +354,7 @@ body {
 }
 
 .example-box p {
-    color: #666;
+    color: #000;
     line-height: 1.6;
 }
 
@@ -432,7 +435,7 @@ body {
 }
 
 .history-item .timestamp {
-    color: #999;
+    color: #000;
     font-size: 0.9em;
     margin-bottom: 10px;
 }
@@ -510,6 +513,7 @@ body {
     resize: vertical;
     min-height: 80px;
     transition: border-color 0.3s;
+    color: #000;
 }
 
 .question-answer:focus {
@@ -519,7 +523,7 @@ body {
 }
 
 .question-answer::placeholder {
-    color: #999;
+    color: #666;
 }
 
 /* 搜索和筛选 */
@@ -543,6 +547,7 @@ body {
     border-radius: 25px;
     font-size: 1em;
     transition: all 0.3s;
+    color: #000;
 }
 
 .search-box input:focus {
@@ -565,6 +570,7 @@ body {
     cursor: pointer;
     transition: all 0.3s;
     font-size: 0.9em;
+    color: #000;
 }
 
 .filter-tag:hover {
