@@ -10,7 +10,6 @@ export default function GlobalNav() {
     { href: '/', label: '首页', icon: '🏠' },
     { href: '/ai-guide', label: 'AI 引导', icon: '🤖', highlight: true },
     { href: '/methodology/scenarios', label: '按场景选择', icon: '🎯' },
-    { href: '/methodology/decision-tree', label: '智能决策树', icon: '🌳' },
     { href: '/methodology/all', label: '所有方法论', icon: '📚' },
   ];
 

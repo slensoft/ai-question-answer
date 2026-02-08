@@ -1,4 +1,4 @@
-import { Methodology, ScenarioNeed, DecisionTreeNode } from '@/types/methodology';
+import { Methodology, ScenarioNeed } from '@/types/methodology';
 
 // 方法论数据
 export const methodologies: Record<string, Methodology> = {
@@ -587,57 +587,4 @@ export const scenarioNeeds: Record<string, ScenarioNeed[]> = {
     { id: 'resource', name: '资源分配', methods: ['权衡矩阵', 'MECE'] },
     { id: 'investment', name: '投资决策', methods: ['逆向提问', '权衡矩阵', '苏格拉底提问'] }
   ]
-};
-
-// 决策树数据
-export const decisionTree: Record<string, DecisionTreeNode> = {
-  start: {
-    question: '你需要什么？',
-    options: [
-      { text: '快速了解和收集信息', next: 'quick' },
-      { text: '深入分析和思考', next: 'deep' },
-      { text: '向他人表达和汇报', next: 'express' },
-      { text: '做出决策和选择', next: 'decide' },
-      { text: '创新和突破', next: 'innovate' }
-    ]
-  },
-  quick: {
-    question: '你的时间和经验如何？',
-    options: [
-      { text: '时间紧迫，需要快速上手', method: '5W2H' },
-      { text: '有一定时间，想要系统分析', method: 'MECE' }
-    ]
-  },
-  deep: {
-    question: '你想深入到什么程度？',
-    options: [
-      { text: '找到问题根本原因', method: '5Why' },
-      { text: '质疑假设和深度思考', method: '苏格拉底提问' },
-      { text: '从第一性原理重新思考', method: '第一性原理' }
-    ]
-  },
-  express: {
-    question: '你的表达场景是？',
-    options: [
-      { text: '向领导汇报工作', method: 'SCQA' },
-      { text: '分享经验和案例', method: 'STAR' },
-      { text: '快速说服他人', method: 'PREP' }
-    ]
-  },
-  decide: {
-    question: '决策的复杂度如何？',
-    options: [
-      { text: '多个方案需要对比', method: '权衡矩阵' },
-      { text: '需要识别风险', method: '逆向提问' },
-      { text: '需要系统分析', method: 'MECE' }
-    ]
-  },
-  innovate: {
-    question: '你遇到了什么障碍？',
-    options: [
-      { text: '思维定式，需要换个角度', method: '问题重构' },
-      { text: '想要根本性创新', method: '第一性原理' },
-      { text: '需要系统化创新流程', method: '双钻模型' }
-    ]
-  }
 };

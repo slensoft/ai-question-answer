@@ -26,15 +26,6 @@ export interface ScenarioNeed {
   methods: string[];
 }
 
-export interface DecisionTreeNode {
-  question: string;
-  options: Array<{
-    text: string;
-    next?: string;
-    method?: string;
-  }>;
-}
-
 export interface PracticeRecord {
   timestamp: string;
   methodology: string;
@@ -42,6 +33,7 @@ export interface PracticeRecord {
   methodologyCategory: string;
   methodologyDescription: string;
   methodologyTags: string[];
+  contextTitle?: string;
   context: string;
   questionAnswers: QuestionAnswer[];
   reflection: string;

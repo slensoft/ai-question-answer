@@ -4,7 +4,7 @@
  * 未来可以轻松替换为真实的后端 API
  */
 
-import { Methodology, ScenarioNeed, DecisionTreeNode } from '@/types/methodology';
+import { Methodology, ScenarioNeed } from '@/types/methodology';
 
 // 模拟 API 延迟
 const simulateDelay = (ms: number = 100) => 
@@ -88,31 +88,6 @@ export async function getScenarioNeedsByType(scenarioId: string): Promise<Scenar
   
   const scenarioNeeds = await getScenarioNeeds();
   return scenarioNeeds[scenarioId] || [];
-}
-
-/**
- * 获取决策树数据
- */
-export async function getDecisionTree(): Promise<Record<string, DecisionTreeNode>> {
-  await simulateDelay();
-  
-  const stored = localStorage.getItem('decisionTree');
-  if (stored) {
-    return JSON.parse(stored);
-  }
-  
-  const defaultData = await import('@/lib/methodology-data').then(m => m.decisionTree);
-  return defaultData;
-}
-
-/**
- * 获取决策树节点
- */
-export async function getDecisionTreeNode(nodeId: string): Promise<DecisionTreeNode | null> {
-  await simulateDelay();
-  
-  const tree = await getDecisionTree();
-  return tree[nodeId] || null;
 }
 
 /**

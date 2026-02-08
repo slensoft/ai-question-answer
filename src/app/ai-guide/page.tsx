@@ -79,7 +79,7 @@ function WelcomePage({ onStart, userStage }: { onStart: () => void; userStage: U
             className="theory-toggle"
             onClick={() => setShowTheory(!showTheory)}
           >
-            {showTheory ? '收起' : '了解更多'} 这是如何工作的？
+            {showTheory ? '收起' : '💡 了解核心思路：邓宁-克鲁格效应'}
             <span className={`arrow ${showTheory ? 'up' : 'down'}`}>▼</span>
           </button>
 
@@ -88,19 +88,6 @@ function WelcomePage({ onStart, userStage }: { onStart: () => void; userStage: U
               <TheoryExplanation />
             </div>
           )}
-        </div>
-
-        {/* 其他入口 */}
-        <div className="other-options">
-          <p>或者你也可以：</p>
-          <div className="option-links">
-            <Link href="/methodology" className="option-link">
-              📚 浏览所有方法论
-            </Link>
-            <Link href="/methodology/scenarios" className="option-link">
-              🎯 按场景选择
-            </Link>
-          </div>
         </div>
       </div>
     </div>

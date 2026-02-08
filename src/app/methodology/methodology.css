@@ -4,6 +4,11 @@
   padding: 20px;
 }
 
+.methodology-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
 .methodology-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
@@ -24,8 +29,6 @@
 }
 
 .methodology-content {
-  max-width: 1400px;
-  margin: 0 auto;
   background: white;
   border-radius: 0 0 20px 20px;
   padding: 40px;
@@ -293,52 +296,6 @@
   line-height: 1.5;
 }
 
-/* 决策树 */
-.decision-tree {
-  background: #fff3e0;
-  border-radius: 20px;
-  padding: 40px;
-  margin-bottom: 40px;
-}
-
-.decision-tree h2 {
-  color: #ff9800;
-  margin-bottom: 30px;
-}
-
-.tree-node {
-  background: white;
-  border-radius: 15px;
-  padding: 25px;
-  margin-bottom: 20px;
-  border-left: 5px solid #ff9800;
-}
-
-.tree-node h4 {
-  color: #ff9800;
-  margin-bottom: 15px;
-}
-
-.tree-options {
-  display: grid;
-  gap: 10px;
-}
-
-.tree-option {
-  background: #f8f9fa;
-  padding: 15px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.3s;
-  border: 2px solid transparent;
-  color: #000;
-}
-
-.tree-option:hover {
-  border-color: #ff9800;
-  background: #fff3e0;
-}
-
 /* 实践区域 */
 .methodology-info {
   background: #e8f5e9;
@@ -591,6 +548,12 @@
   width: 100%;
 }
 
+.modal-content h2 {
+  color: #1a202c;
+  margin: 0 0 24px 0;
+  font-size: 1.5em;
+}
+
 .options {
   display: grid;
   gap: 15px;
@@ -605,6 +568,19 @@
   transition: all 0.3s;
   text-align: left;
   font-size: 1em;
+  color: #2d3748;
+}
+
+.option-btn strong {
+  color: #1a202c;
+  font-size: 1.1em;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.option-btn small {
+  color: #4a5568;
+  font-size: 0.9em;
 }
 
 .option-btn:hover {
@@ -642,114 +618,6 @@
   .search-box {
     width: 100%;
   }
-}
-
-/* 导航栏 */
-.methodology-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  padding: 20px 40px;
-  background: white;
-  border-bottom: 2px solid #e0e0e0;
-  flex-wrap: wrap;
-}
-
-.nav-left {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.nav-right {
-  display: flex;
-  gap: 10px;
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 24px;
-  border-radius: 25px;
-  text-decoration: none;
-  color: #666;
-  background: #f8f9fa;
-  transition: all 0.3s;
-  font-weight: 500;
-  border: 2px solid transparent;
-  position: relative;
-}
-
-.nav-item.highlight {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  animation: pulse 2s infinite;
-}
-
-.nav-item.highlight .badge {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: #ef4444;
-  color: white;
-  font-size: 0.7em;
-  padding: 2px 6px;
-  border-radius: 10px;
-  font-weight: 700;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
-  }
-  50% {
-    box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
-  }
-}
-
-.nav-item:hover {
-  background: #e8f5e9;
-  color: #2e7d32;
-  transform: translateY(-2px);
-}
-
-.nav-item.highlight:hover {
-  background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
-  color: white;
-}
-
-.nav-item.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-color: #667eea;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-}
-
-.nav-item.user-center {
-  background: #fff3e0;
-  color: #e65100;
-}
-
-.nav-item.user-center:hover {
-  background: #ffe0b2;
-  color: #e65100;
-}
-
-.nav-item.user-center.active {
-  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
-  color: white;
-  border-color: #ff9800;
-  box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
-}
-
-.nav-icon {
-  font-size: 1.2em;
-}
-
-.nav-label {
-  font-size: 1em;
 }
 
 /* 首页介绍 */
@@ -849,29 +717,8 @@
   font-size: 1.2em;
 }
 
-/* 响应式导航 */
+/* 响应式设计 */
 @media (max-width: 768px) {
-  .methodology-nav {
-    padding: 15px 20px;
-    gap: 8px;
-    flex-direction: column;
-  }
-  
-  .nav-left,
-  .nav-right {
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .nav-item {
-    padding: 10px 16px;
-    font-size: 0.9em;
-  }
-  
-  .nav-icon {
-    font-size: 1em;
-  }
-  
   .intro-cards {
     grid-template-columns: 1fr;
   }

@@ -41,6 +41,7 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
   const { saveRecord } = usePracticeHistory();
 
   const [context, setContext] = useState('');
+  const [contextTitle, setContextTitle] = useState('');
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [selectedQuickOptions, setSelectedQuickOptions] = useState<Record<number, Set<string>>>({});
   const [aiSuggestions, setAiSuggestions] = useState<Record<number, AISuggestion[]>>({});
@@ -51,6 +52,7 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
   const [historyRecords, setHistoryRecords] = useState<PracticeRecord[]>([]);
   const [showHistoryPrompt, setShowHistoryPrompt] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+  const [showExample, setShowExample] = useState(false);
 
   // 处理可视化按钮点击 - 跳转到新页面
   const handleVisualize = () => {
@@ -85,6 +87,7 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
           const targetRecord = records.find(r => r.timestamp === timestamp);
           if (targetRecord && data) {
             // 直接在这里回填数据，避免依赖问题
+            setContextTitle(targetRecord.contextTitle || '');
             setContext(targetRecord.context);
             
             const newAnswers: Record<number, string> = {};
@@ -146,6 +149,7 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
 
   const loadHistoryRecord = (record: PracticeRecord) => {
     // 回填问题描述
+    setContextTitle(record.contextTitle || '');
     setContext(record.context);
     
     // 回填答案
@@ -209,9 +213,9 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
   };
 
   const generateAISuggestionsForQuestion = async (questionIndex: number, question: string, isAuto = false) => {
-    if (!context.trim()) {
+    if (!context.trim() && !contextTitle.trim()) {
       if (!isAuto) {
-        showToast('请先填写问题描述，AI才能提供相关建议', 'info');
+        showToast('请先填写问题标题或情景描述，AI才能提供相关建议', 'info');
       }
       return;
     }
@@ -219,8 +223,12 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
     setLoadingAI(prev => ({ ...prev, [questionIndex]: true }));
     
     try {
+      const fullContext = contextTitle.trim() 
+        ? `${contextTitle}\n\n${context}` 
+        : context;
+      
       const aiResponse = await generateAISuggestions({
-        context,
+        context: fullContext,
         question,
         methodologyName: method?.name || '',
         previousAnswers: Object.values(answers).filter(a => a.trim())
@@ -333,8 +341,8 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
   };
 
   const handleSubmit = async () => {
-    if (!context.trim()) {
-      showToast('请填写问题描述！', 'error');
+    if (!context.trim() && !contextTitle.trim()) {
+      showToast('请填写问题标题或情景描述！', 'error');
       return;
     }
 
@@ -357,6 +365,7 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
       methodologyCategory: method.category,
       methodologyDescription: method.description,
       methodologyTags: method.tags,
+      contextTitle,
       context,
       questionAnswers,
       reflection
@@ -371,6 +380,7 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
       setHistoryRecords(records);
       
       // 清空表单
+      setContextTitle('');
       setContext('');
       setAnswers({});
       setSelectedQuickOptions({});
@@ -383,7 +393,7 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
 
   const handleExport = () => {
     // 检查是否有当前填写的内容
-    if (!context.trim() && Object.values(answers).every(a => !a?.trim())) {
+    if (!context.trim() && !contextTitle.trim() && Object.values(answers).every(a => !a?.trim())) {
       showToast('当前页面没有填写任何内容！', 'error');
       return;
     }
@@ -402,6 +412,7 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
       methodologyDescription: method?.description,
       methodologyTags: method?.tags,
       exportDate: new Date().toISOString(),
+      contextTitle,
       context,
       questionAnswers,
       reflection
@@ -432,7 +443,7 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
 
   const handleCopyJSON = async () => {
     // 检查是否有当前填写的内容
-    if (!context.trim() && Object.values(answers).every(a => !a?.trim())) {
+    if (!context.trim() && !contextTitle.trim() && Object.values(answers).every(a => !a?.trim())) {
       showToast('当前页面没有填写任何内容！', 'error');
       return;
     }
@@ -451,6 +462,7 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
       methodologyDescription: method?.description,
       methodologyTags: method?.tags,
       exportDate: new Date().toISOString(),
+      contextTitle,
       context,
       questionAnswers,
       reflection
@@ -506,6 +518,10 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
               <div key={index} className="history-item">
                 <div className="history-item-info">
                   <div className="history-context">
+                    {record.contextTitle && (
+                      <strong>{record.contextTitle}</strong>
+                    )}
+                    {record.contextTitle && record.context && ' - '}
                     {record.context.substring(0, 60)}
                     {record.context.length > 60 ? '...' : ''}
                   </div>
@@ -527,42 +543,51 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
       )}
 
       <div className="practice-content-grid">
-        {/* 左侧：问题描述 + 示例 */}
-        <div className="practice-sidebar">
+        {/* 单列布局：输入框 + 思考框架 */}
+        <div className="practice-main-column">
+          {/* 示例（可折叠） */}
+          <div className="example-section">
+            <div 
+              className="example-header clickable" 
+              onClick={() => setShowExample(!showExample)}
+            >
+              <span>💡 查看示例</span>
+              <span className="expand-icon">{showExample ? '−' : '+'}</span>
+            </div>
+            {showExample && (
+              <div className="example-content">
+                <p>{method.example}</p>
+              </div>
+            )}
+          </div>
+
+          {/* 问题描述 */}
           <div className="context-box">
-            <label className="compact-label">📋 问题描述</label>
+            <label className="compact-label">📋 问题标题</label>
+            <input
+              type="text"
+              className="compact-input"
+              value={contextTitle}
+              onChange={(e) => setContextTitle(e.target.value)}
+              placeholder="用一句话概括你的问题..."
+            />
+            
+            <label className="compact-label" style={{ marginTop: '12px' }}>📝 问题情景/上下文</label>
             <textarea
               className="compact-textarea"
               value={context}
               onChange={(e) => setContext(e.target.value)}
-              placeholder="简要描述你的问题或情境..."
+              placeholder="详细描述问题的背景、情景和相关信息..."
               rows={4}
             />
           </div>
 
-          <div className="example-compact">
-            <div className="example-header">💡 示例</div>
-            <p className="example-text">{method.example}</p>
-          </div>
-
-          <div className="reflection-box">
-            <label className="compact-label">💭 反思（可选）</label>
-            <textarea
-              className="compact-textarea"
-              value={reflection}
-              onChange={(e) => setReflection(e.target.value)}
-              placeholder="你的收获..."
-              rows={3}
-            />
-          </div>
-        </div>
-
-        {/* 右侧：问题列表（可折叠） */}
-        <div className="questions-compact">
-          <div className="questions-header">
-            <h3>🤔 思考框架</h3>
-            <span className="questions-count">{method.questions.length} 个问题</span>
-          </div>
+          {/* 思考框架 */}
+          <div className="questions-compact">
+            <div className="questions-header">
+              <h3>🤔 思考框架</h3>
+              <span className="questions-count">{method.questions.length} 个问题</span>
+            </div>
 
           <div className="questions-accordion">
             {method.questions.map((q, i) => {
@@ -665,6 +690,19 @@ export default function PracticeView({ methodologyKey, onBack }: PracticeViewPro
                 </div>
               );
             })}
+          </div>
+          </div>
+
+          {/* 反思和收获 */}
+          <div className="reflection-box">
+            <label className="compact-label">💭 反思和收获</label>
+            <textarea
+              className="compact-textarea"
+              value={reflection}
+              onChange={(e) => setReflection(e.target.value)}
+              placeholder="通过这次思考，你有什么收获和感悟..."
+              rows={4}
+            />
           </div>
         </div>
       </div>

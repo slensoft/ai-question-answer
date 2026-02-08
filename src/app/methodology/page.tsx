@@ -17,16 +17,16 @@ export default function MethodologyPage() {
           <p>这里收录了15种经典的提问与思考方法论，帮助你在不同场景下更好地分析问题、做出决策。</p>
           
           <div className="intro-cards">
+            <Link href="/ai-guide" className="intro-card">
+              <div className="intro-icon">🤖</div>
+              <h3>AI 引导</h3>
+              <p>不确定用什么方法？AI 通过提问帮你快速找到最适合的方法论</p>
+            </Link>
+
             <Link href="/methodology/scenarios" className="intro-card">
               <div className="intro-icon">🎯</div>
               <h3>按场景选择</h3>
               <p>根据你当前的实际场景（工作、学习、创新、决策），快速找到最适合的方法论</p>
-            </Link>
-
-            <Link href="/methodology/decision-tree" className="intro-card">
-              <div className="intro-icon">🌳</div>
-              <h3>智能决策树</h3>
-              <p>不确定用哪个方法？回答几个问题，让我们帮你找到最合适的方法论</p>
             </Link>
 
             <Link href="/methodology/all" className="intro-card">
@@ -39,8 +39,8 @@ export default function MethodologyPage() {
           <div className="quick-start">
             <h3>💡 使用建议</h3>
             <ul>
-              <li>如果你有明确的场景需求，推荐使用「按场景选择」</li>
-              <li>如果你不确定该用哪个方法，试试「智能决策树」</li>
+              <li>如果你不确定该用哪个方法，推荐使用「AI 引导」</li>
+              <li>如果你有明确的场景需求，可以使用「按场景选择」</li>
               <li>如果你想系统学习所有方法，可以浏览「所有方法论」</li>
             </ul>
           </div>

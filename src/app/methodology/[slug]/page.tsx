@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { methodologies } from '@/lib/methodology-data';
 import PracticeView from '@/components/PracticeView';
 import { use } from 'react';
+import '../methodology.css';
 
 interface PageProps {
   params: Promise<{
@@ -41,16 +42,18 @@ export default function MethodologyDetailPage({ params }: PageProps) {
 
   return (
     <div className="methodology-container">
-      <div className="methodology-header">
-        <h1>🎯 {methodologies[slug].name}</h1>
-        <p>{methodologies[slug].description}</p>
-      </div>
+      <div className="methodology-wrapper">
+        <div className="methodology-header">
+          <h1>🎯 {methodologies[slug].name}</h1>
+          <p>{methodologies[slug].description}</p>
+        </div>
 
-      <div className="methodology-content">
-        <PracticeView
-          methodologyKey={slug}
-          onBack={handleBack}
-        />
+        <div className="methodology-content">
+          <PracticeView
+            methodologyKey={slug}
+            onBack={handleBack}
+          />
+        </div>
       </div>
     </div>
   );

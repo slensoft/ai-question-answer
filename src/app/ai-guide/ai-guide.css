@@ -327,17 +327,18 @@
 }
 
 .step-number {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  font-size: 1.2rem;
+  font-weight: 900;
+  font-size: 1.1rem;
   flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 .step-content h4 {
@@ -712,7 +713,7 @@
 
 .conversation-review h3 {
   margin: 0 0 20px 0;
-  color: #333;
+  color: #1a202c;
   font-size: 1.1em;
 }
 
@@ -731,7 +732,7 @@
 
 .review-question {
   font-weight: 600;
-  color: #555;
+  color: #2d3748;
   margin-bottom: 6px;
   font-size: 0.9em;
 }
@@ -767,7 +768,7 @@
 
 .loading-message p {
   font-size: 1.1em;
-  color: #666;
+  color: #2d3748;
 }
 
 /* 推荐结果页面 */
@@ -784,12 +785,12 @@
 
 .result-header h2 {
   margin: 0 0 12px 0;
-  color: #333;
+  color: #1a202c;
   font-size: 2em;
 }
 
 .result-header p {
-  color: #666;
+  color: #2d3748;
   font-size: 1em;
 }
 
@@ -829,7 +830,7 @@
 
 .method-card-header h3 {
   margin: 0;
-  color: #333;
+  color: #1a202c;
   font-size: 1.3em;
 }
 
@@ -838,7 +839,7 @@
 }
 
 .method-description {
-  color: #666;
+  color: #2d3748;
   line-height: 1.6;
   margin-bottom: 16px;
 }
