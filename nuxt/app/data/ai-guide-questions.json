@@ -1,0 +1,236 @@
+{
+  "questions": {
+    "start": {
+      "id": "start",
+      "question": "你需要什么帮助？",
+      "type": "single",
+      "options": [
+        {
+          "id": "analyze",
+          "text": "分析问题",
+          "description": "找出原因、理解现状",
+          "next": "analyze_depth"
+        },
+        {
+          "id": "decide",
+          "text": "做决策",
+          "description": "在多个方案中选择",
+          "next": "decide_complexity"
+        },
+        {
+          "id": "innovate",
+          "text": "激发创意",
+          "description": "产生新想法、突破思维",
+          "next": "innovate_obstacle"
+        },
+        {
+          "id": "express",
+          "text": "表达汇报",
+          "description": "向他人清晰表达想法",
+          "next": "express_scenario"
+        },
+        {
+          "id": "learn",
+          "text": "学习成长",
+          "description": "理解知识、自我提升",
+          "next": "learn_goal"
+        }
+      ]
+    },
+    "analyze_depth": {
+      "id": "analyze_depth",
+      "question": "你想分析到什么程度？",
+      "type": "single",
+      "options": [
+        {
+          "id": "quick",
+          "text": "快速全面了解",
+          "description": "时间紧迫，需要快速梳理",
+          "next": "analyze_people"
+        },
+        {
+          "id": "deep",
+          "text": "深入找根本原因",
+          "description": "有时间深挖问题本质",
+          "next": "analyze_root_cause"
+        },
+        {
+          "id": "systematic",
+          "text": "系统化拆解",
+          "description": "需要结构化、不重不漏",
+          "next": "analyze_people"
+        }
+      ]
+    },
+    "analyze_root_cause": {
+      "id": "analyze_root_cause",
+      "question": "你想用什么方式找根因？",
+      "type": "single",
+      "options": [
+        {
+          "id": "why_chain",
+          "text": "连续追问为什么",
+          "description": "简单直接，层层深入",
+          "method": "5Why"
+        },
+        {
+          "id": "challenge_assumption",
+          "text": "质疑假设和前提",
+          "description": "批判性思考，揭示盲区",
+          "method": "苏格拉底提问"
+        },
+        {
+          "id": "first_principle",
+          "text": "从第一性原理思考",
+          "description": "打破常规，重新推理",
+          "method": "第一性原理"
+        }
+      ]
+    },
+    "analyze_people": {
+      "id": "analyze_people",
+      "question": "这个问题涉及多少人？",
+      "type": "single",
+      "options": [
+        {
+          "id": "individual",
+          "text": "个人思考",
+          "description": "我自己想明白就行",
+          "next": "recommend_individual_analyze"
+        },
+        {
+          "id": "small_team",
+          "text": "小团队协作",
+          "description": "3-10 人一起讨论",
+          "next": "recommend_team_analyze"
+        },
+        {
+          "id": "large_team",
+          "text": "大团队共识",
+          "description": "10 人以上需要达成一致",
+          "next": "recommend_team_analyze"
+        }
+      ]
+    },
+    "recommend_individual_analyze": {
+      "id": "recommend_individual_analyze",
+      "question": "根据你的需求，推荐以下方法：",
+      "type": "recommendation",
+      "methods": ["5W2H", "MECE"],
+      "confidence": 0.85
+    },
+    "recommend_team_analyze": {
+      "id": "recommend_team_analyze",
+      "question": "根据你的需求，推荐以下方法：",
+      "type": "recommendation",
+      "methods": ["5W2H", "MECE", "双钻模型"],
+      "confidence": 0.82
+    },
+    "decide_complexity": {
+      "id": "decide_complexity",
+      "question": "决策的复杂度如何？",
+      "type": "single",
+      "options": [
+        {
+          "id": "multiple_options",
+          "text": "多个方案需要对比",
+          "description": "有几个选项，不知道选哪个",
+          "method": "权衡矩阵"
+        },
+        {
+          "id": "risk_focus",
+          "text": "主要担心风险",
+          "description": "想知道可能出什么问题",
+          "method": "逆向提问"
+        },
+        {
+          "id": "systematic_decide",
+          "text": "需要系统化分析",
+          "description": "问题复杂，需要全面考虑",
+          "method": "MECE"
+        }
+      ]
+    },
+    "innovate_obstacle": {
+      "id": "innovate_obstacle",
+      "question": "你遇到了什么障碍？",
+      "type": "single",
+      "options": [
+        {
+          "id": "mental_block",
+          "text": "思维定式",
+          "description": "总是用老办法，需要换个角度",
+          "method": "问题重构"
+        },
+        {
+          "id": "radical_innovation",
+          "text": "想要根本性创新",
+          "description": "不满足于改良，要颠覆式创新",
+          "method": "第一性原理"
+        },
+        {
+          "id": "systematic_innovation",
+          "text": "需要系统化创新流程",
+          "description": "想要有章法地创新",
+          "method": "双钻模型"
+        }
+      ]
+    },
+    "express_scenario": {
+      "id": "express_scenario",
+      "question": "你的表达场景是？",
+      "type": "single",
+      "options": [
+        {
+          "id": "report_to_leader",
+          "text": "向领导汇报",
+          "description": "需要逻辑清晰、说服力强",
+          "method": "SCQA"
+        },
+        {
+          "id": "share_experience",
+          "text": "分享经验案例",
+          "description": "讲述过往经历和成果",
+          "method": "STAR"
+        },
+        {
+          "id": "quick_persuade",
+          "text": "快速说服他人",
+          "description": "电梯演讲、简短有力",
+          "method": "PREP"
+        }
+      ]
+    },
+    "learn_goal": {
+      "id": "learn_goal",
+      "question": "你的学习目标是？",
+      "type": "single",
+      "options": [
+        {
+          "id": "understand_concept",
+          "text": "深入理解概念",
+          "description": "检验自己是否真的懂了",
+          "method": "费曼技巧"
+        },
+        {
+          "id": "critical_thinking",
+          "text": "培养批判性思维",
+          "description": "学会质疑和深度思考",
+          "method": "苏格拉底提问"
+        },
+        {
+          "id": "quick_grasp",
+          "text": "快速掌握新知识",
+          "description": "系统化地学习新内容",
+          "method": "5W2H"
+        }
+      ]
+    }
+  },
+  "metadata": {
+    "version": "1.0",
+    "lastUpdate": "2026-02-08",
+    "totalQuestions": 10,
+    "description": "AI引导式方法论推荐问题树"
+  }
+}
