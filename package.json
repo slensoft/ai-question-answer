@@ -5,14 +5,20 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "mermaid": "^11.4.1",
     "nuxt": "^4.3.1",
     "vue": "^3.5.28",
-    "vue-router": "^4.6.4",
-    "mermaid": "^11.4.1"
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "vitepress": "^1.6.4"
   }
 }
