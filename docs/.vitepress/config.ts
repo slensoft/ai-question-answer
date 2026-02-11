@@ -8,7 +8,7 @@ export default defineConfig({
     nav: [
       { text: '首页', link: '/' },
       { text: '快速开始', link: '/快速开始' },
-      { text: '功能实现', link: '/AI引导功能实现说明' },
+      { text: '实现说明', link: '/AI引导功能实现说明' },
       { text: '产品设计', link: '/AI引导式方法论推荐系统-产品设计文档' },
       { text: '方法论对比', link: '/方法论对比表' },
     ],
@@ -18,10 +18,10 @@ export default defineConfig({
         items: [{ text: '快速开始', link: '/快速开始' }],
       },
       {
-        text: '核心文档',
+        text: '产品与实现',
         items: [
-          { text: 'AI引导功能实现说明', link: '/AI引导功能实现说明' },
-          { text: 'AI引导式方法论推荐系统-产品设计文档', link: '/AI引导式方法论推荐系统-产品设计文档' },
+          { text: 'AI 引导功能实现说明', link: '/AI引导功能实现说明' },
+          { text: 'AI 引导式方法论推荐系统（产品设计）', link: '/AI引导式方法论推荐系统-产品设计文档' },
           { text: '方法论对比表', link: '/方法论对比表' },
         ],
       },
