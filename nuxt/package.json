@@ -1,7 +1,5 @@
 {
-  "name": "methodology-learning-platform",
-  "version": "1.0.0",
-  "description": "AI引导式方法论推荐系统 - Nuxt版本",
+  "name": "nuxt",
   "type": "module",
   "private": true,
   "scripts": {
@@ -15,9 +13,5 @@
     "nuxt": "^4.3.1",
     "vue": "^3.5.28",
     "vue-router": "^4.6.4"
-  },
-  "devDependencies": {
-    "typescript": "^5.9.3",
-    "vue-tsc": "^3.2.4"
   }
 }
